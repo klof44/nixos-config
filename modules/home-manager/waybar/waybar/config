@@ -1,0 +1,74 @@
+{
+    "modules-left": ["hyprland/workspaces", "custom/media"],
+    "modules-center": ["clock"],
+    "modules-right": ["tray", "pulseaudio", "backlight", "temperature", "battery"],
+    "output": ["eDP-1", "eDP-2"],
+    
+    "custom/media": {
+      "return-type": "json",
+      "exec": "sh ~/.config/waybar/scripts/music.sh",
+      "on-click": "playerctl --player=%any,firefox play-pause",
+      "on-scroll-up": "playerctl --player=%any,firefox next",
+      "on-scroll-down": "playerctl --player=%any,firefox previous"
+    },
+
+    "network": {
+        "format-wifi": "",
+        "format-ethernet": "{ifname} ",
+        "format-disconnected": "", 
+        "max-length": 50,
+        "on-click": "foot -e 'nmtui-connect'"
+    },
+    "tray": {
+        "icon-size": 15,
+        "spacing": 10,
+        "layer": "top"
+    },
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": "0% {icon} ",
+        "format-source": " {volume}%",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    },
+	"custom/power": {
+		"format": " ",
+		"on-click": "bash $HOME/.config/rofi/powermenu.sh"
+	},
+  "battery": {
+    "interval": 10,
+    "states": {
+      "warning": 20,
+      "critical": 10
+    },
+    "format": "{icon} {capacity}%",
+    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰁹"],
+    "format-full": "{icon} {capacity}%",
+    "format-charging": "󰂄 {capacity}%",
+    "tooltip": false
+  },
+  "backlight": {
+    "device": "intel_backlight",
+    "on-scroll-up": "light -A 1",
+    "on-scroll-down": "light -U 1",
+    "format": "{icon} {percent}%",
+    "format-icons": ["󰃞","󰃟","󰃝","󰃠"]
+  },
+  "temperature": {
+    "hwmon-path": "/sys/class/hwmon/hwmon4/temp1_input",
+    "critical-threshold": 65,
+    "tooltip": false,
+    "format": " {temperatureC}°C"
+  }
+}
