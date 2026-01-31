@@ -19,40 +19,56 @@
     settings = {
       bar = {
         density = "compact";
-	position = "top";
-	showCapsule = false;
-	monitors = [ "eDP-1" ];
+        position = "top";
+        showCapsule = false;
+	transparentBackground = false;
+        monitors = [ "eDP-1" ];
 
-	widgets = {
-	  left = [
-	    { id = "Clock"; }
-	    { id = "ActiveWindow"; }
-	    { id = "MediaMini"; }
-	  ];
+        widgets = {
+          left = [
+            {
+              id = "ControlCenter";
+              useDistroLogo = true;
+              enableColorization = true;
+              colorizeDistroLogo = true;
+              colorizeSystemIcon = "primary";
+            }
+            { id = "Clock"; }
+            { id = "ActiveWindow"; }
+            { 
+              id = "MediaMini";
+              showAlbumArt = true;
+              showVisualizer = false;
+            }
+          ];
 
-	  center = [
-	    { id = "Workspace"; }
-	  ];
+          center = [
+            { id = "Workspace"; }
+          ];
 
-	  right = [
-	    { id = "Tray"; }
-	    { id = "Volume"; }
-	    { id = "Brightness"; }
-	    { id = "NotificationHistory"; }
-	    { id = "Battery"; }
-	  ];
-	};
+          right = [
+            { 
+              id = "Tray"; 
+              colorizeIcons = true;
+              drawerEnabled = false;
+            }
+	    { id = "Network"; }
+            { id = "Volume"; }
+            { id = "Brightness"; }
+            { id = "NotificationHistory"; }
+            { id = "Battery"; }
+          ];
+	      };
       };
 
       wallpaper = {
         enabled = true;
         directory = "/home/maxim/.cache/noctalia";
-	overviewEnabled = true;
+        overviewEnabled = true;
       };
 
-      colourSchemes = {
+      colorSchemes = {
         useWallpaperColors = true;
-        matugenSchemeType = "fidelity";
       };
 
       ui = {
@@ -61,13 +77,21 @@
 
       templates = {
         gtk = true;
-	qt = true;
-	foot = true;
+        qt = true;
+        foot = true;
       };
 
       location = { weatherEnabled = false; };
 
       network.wifiEnabled = true;
+
+      dock = {
+        enabled = false;
+      };
+
+      OSD = {
+        monitors = [ "eDP-1" ];
+      };
     };
   };
 }

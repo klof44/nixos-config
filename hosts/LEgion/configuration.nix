@@ -2,28 +2,42 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, lib, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
+  imports = [
       ./hardware-configuration.nix
-    ];
-  
-  swapDevices = [ {
-    device = "/var/lib/swap";
-    size = 32*1024;
-  } ];
+      ../../modules/nixos/16ARX8.nix
+  ];
+
+  swapDevices = [{
+    device = "/dev/disk/by-uuid/9c7507ff-3aec-423a-b7a1-27fa91875b7f";
+    options = [ "discard" ];
+  }];
+  boot.resumeDevice = "/dev/disk/by-uuid/9c7507ff-3aec-423a-b7a1-27fa91875b7";
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.systemd-boot.configurationLimit = 12;
 
-  # Use latest kernel.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelModules  = [ "v4l2loopback" ];
+
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  boot.kernel.sysctl."vm.max_map_count" = 2147483642;
 
   boot.extraModprobeConfig = ''
   options snd_hda_intel power_save=0
+  options rtw89_pci disable_aspm_l1=Y disable_aspm_l1ss=Y
+  '';
+  services.udev.extraRules = ''
+  ACTION=="add" SUBSYSTEM=="pci" ATTR{vendor}=="0x1022" ATTR{device}=="0x15b8" ATTR{power/wakeup}="disabled"
+  ACTION=="add" SUBSYSTEM=="pci" ATTR{vendor}=="0x1022" ATTR{device}=="0x15b7" ATTR{power/wakeup}="disabled"
+
+  # Keyboard and Touchpad no suspend
+  # ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="048d", ATTR{idProduct}=="c103", TEST=="power/control", ATTR{power/control}="on"
+  # ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="048d", ATTR{idProduct}=="c985", TEST=="power/control", ATTR{power/control}="on"
   '';
 
   boot.supportedFilesystems = [ "ntfs" ];
@@ -47,10 +61,18 @@
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;
 
+  hardware.enableRedistributableFirmware = true;
+  networking.networkmanager.wifi.powersave = false;
+
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Enable networking
   networking.networkmanager.enable = true;
+  networking.firewall = {
+    enable = false;
+    # allowPing = true;
+    # rejectPackets = false;
+  };
 
   # Set your time zone.
   time.timeZone = "America/Winnipeg";
@@ -61,15 +83,16 @@
   programs.niri.enable = true;
 
   services.xserver.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
+  services.displayManager.gdm = {
+    enable = true;
+    wayland = true;
+  };
 
-  # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
 
-  # Enable CUPS to print documents.
   services.printing.enable = true;
 
   # Enable sound with pipewire.
@@ -81,13 +104,6 @@
     alsa.support32Bit = true;
     pulse.enable = true;
 
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
-
     # extraConfig.pipewire."92-low-latency" = {
     #  "context.properties" = {
     #     "default.clock.rate" = 48000;
@@ -98,32 +114,52 @@
     # };
   };
 
-  services = {
-    upower.enable = true;
+  # powerManagement.powertop.enable = true;
 
-    tlp = {
-      enable = true;
-      settings = {
-        USB_AUTOSUSPEND = 0;
-	      RUNTIME_PM_ON_BAT = "on";
-        CPU_BOOST_ON_AC = 1;
-        CPU_BOOST_ON_BAT = 0;
-        CPU_SCALING_GOVERNOR_ON_AC = "performance";
-        CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
-        STOP_CHARGE_THRESH_BAT0 = 95;
-      };
+  services.system76-scheduler.settings.cfsProfiles.enable = true;
+  services.power-profiles-daemon.enable = false;
+  services.tlp = {
+    enable = true;
+    settings = {
+      CPU_BOOST_ON_AC = 1;
+      CPU_BOOST_ON_BAT = 1;
+      CPU_HWP_DYN_BOOST_ON_AC = 1;
+      CPU_HWP_DYN_BOOST_ON_BAT = 1;
+      CPU_SCALING_GOVERNOR_ON_AC = "performance";
+      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+      CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+      CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_power";
+      PLATFORM_PROFILE_ON_AC = "performance";
+      PLATFORM_PROFILE_ON_BAT = "balanced";
+      START_CHARGE_THRESH_BAT0 = 75;
+      STOP_CHARGE_THRESH_BAT0 = 81;
     };
   };
+  services.upower.enable = true;
 
-  security.polkit.enable = true;
+   security.polkit.enable = true;
   services.gnome.gnome-keyring.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+  programs.obs-studio = {
+    enable = true;
+    package = (pkgs.obs-studio.override {
+      cudaSupport = true;
+    });
+
+    plugins = with pkgs.obs-studio-plugins; [
+      wlrobs
+      obs-pipewire-audio-capture
+      obs-gstreamer
+    ];
+
+    enableVirtualCamera = true;
+  };
+
   programs.fish.enable = true;
   users.users.maxim = {
     isNormalUser = true;
     description = "Maxim";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
     packages = with pkgs; [
       neovim
       git
@@ -132,10 +168,18 @@
       xorg.libXcursor
       flatpak
       scrcpy
-      p7zip
+      foot
+      v4l-utils
+      ffmpeg-full
+      powertop
+      thunar-archive-plugin
+      thunar-volman
+      direnv
     ];
     shell = pkgs.fish;
   };
+  nix.settings.trusted-users = [ "root" "maxim" ];
+
   services.flatpak.enable = true;
 
   programs.steam = {
@@ -152,10 +196,6 @@
 
   programs.thunar.enable = true;
   programs.xfconf.enable = true;
-  programs.thunar.plugins = with pkgs.xfce; [
-    thunar-archive-plugin
-    thunar-volman
-  ];
   services.gvfs.enable = true;
   services.tumbler.enable = true;
 
@@ -166,38 +206,21 @@
     backupFileExtension = "backup";
   };
 
-  programs.firefox.enable = true;
-
   fonts.fontDir.enable = true;
 
   nixpkgs.config.allowUnfree = true;
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment.systemPackages = with pkgs; [
     neovim 
     git
     gparted
+    btop
+    vmware-workstation
+    firefox
   ];
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+ 
+  boot.kernelParams = [ "transparent_hugepage=never" ];
+  virtualisation.vmware.host.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

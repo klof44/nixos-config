@@ -9,10 +9,11 @@
     hyprlock
     hypridle
     xwayland-satellite
+    brightnessctl
   ];
 
   imports = [
     ../noctalia/noctalia.nix
-    ../wofi/wofi.nix
+    # ../wofi/wofi.nix
   ];
 }

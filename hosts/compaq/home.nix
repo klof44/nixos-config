@@ -10,20 +10,8 @@
   home.stateVersion = "25.11"; # Please read the comment before changing.
 
   home.packages = with pkgs; [
-    wl-clipboard
-    cliphist
-    vscode
     nerd-fonts.jetbrains-mono
-    vesktop
-    arrpc
-    spotify
-    prismlauncher
-    osu-lazer-bin
-    jetbrains-toolbox
     inputs.DuckGameRebuilt.packages.x86_64-linux.default
-    gitkraken
-    onlyoffice-desktopeditors
-    bun
   ];
 
   fonts.fontconfig.enable = true;
