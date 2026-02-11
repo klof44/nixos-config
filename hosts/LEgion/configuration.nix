@@ -1,13 +1,10 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, inputs, lib, ... }:
 
 {
   imports = [
       ./hardware-configuration.nix
       ../../modules/nixos/16ARX8.nix
+      inputs.nix-gaming.nixosModules.pipewireLowLatency
   ];
 
   swapDevices = [{
@@ -66,12 +63,18 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # Enable networking
+  nix.gc = {
+    automatic = true;
+    dates = "daily";
+    options = "--delete-older-than 2d";
+  };
+  nix.settings.auto-optimise-store = true;
+
+  programs.localsend.enable = true;
+
   networking.networkmanager.enable = true;
   networking.firewall = {
-    enable = false;
-    # allowPing = true;
-    # rejectPackets = false;
+    enable = true;
   };
 
   # Set your time zone.
@@ -104,14 +107,11 @@
     alsa.support32Bit = true;
     pulse.enable = true;
 
-    # extraConfig.pipewire."92-low-latency" = {
-    #  "context.properties" = {
-    #     "default.clock.rate" = 48000;
-    #     "default.clock.quantum" = 32;
-    #     "default.clock.min-quantum" = 32;
-    #     "default.clock.max-quantum" = 32;
-    #   };
-    # };
+    lowLatency = {
+      enable = true;
+      quantum = 86;
+      rate = 48000;
+    };
   };
 
   # powerManagement.powertop.enable = true;
@@ -137,7 +137,7 @@
   };
   services.upower.enable = true;
 
-   security.polkit.enable = true;
+  security.polkit.enable = true;
   services.gnome.gnome-keyring.enable = true;
 
   programs.obs-studio = {
@@ -155,7 +155,13 @@
     enableVirtualCamera = true;
   };
 
-  programs.fish.enable = true;
+  programs.fish = {
+    enable = true;
+    interactiveShellInit = ''
+      set fish_greeting
+    '';
+  };
+
   users.users.maxim = {
     isNormalUser = true;
     description = "Maxim";
@@ -165,7 +171,7 @@
       git
       gamescope-wsi
       protonup-qt
-      xorg.libXcursor
+      libxcursor
       flatpak
       scrcpy
       foot
@@ -175,6 +181,13 @@
       thunar-archive-plugin
       thunar-volman
       direnv
+      gpu-screen-recorder
+      inputs.nix-gaming.packages.${pkgs.stdenv.hostPlatform.system}.osu-stable
+
+      fishPlugins.hydro
+      fishPlugins.z
+      fishPlugins.done
+      fishPlugins.sponge
     ];
     shell = pkgs.fish;
   };
@@ -210,6 +223,12 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  # osu!
+  nix.settings = {
+    substituters = ["https://nix-gaming.cachix.org"];
+    trusted-public-keys = ["nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="];
+  };
+
   environment.systemPackages = with pkgs; [
     neovim 
     git
@@ -217,6 +236,9 @@
     btop
     vmware-workstation
     firefox
+    nvtopPackages.nvidia
+    nvtopPackages.amd
+    nautilus
   ];
  
   boot.kernelParams = [ "transparent_hugepage=never" ];

@@ -21,9 +21,10 @@
 
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
+    nix-gaming.url = "github:fufexan/nix-gaming";
   };
 
-  outputs = inputs@{nixpkgs, home-manager, nix-cachyos-kernel, ...}: {
+  outputs = inputs@{nixpkgs, home-manager, nix-cachyos-kernel, nix-gaming, ...}: {
     nixosConfigurations.LEgion = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [

@@ -4,10 +4,7 @@
   home.username = "maxim";
   home.homeDirectory = "/home/maxim";
 
-  # You should not change this value, even if you update Home Manager. If you do
-  # want to update the value, then make sure to first check the Home Manager
-  # release notes.
-  home.stateVersion = "25.11"; # Please read the comment before changing.
+  home.stateVersion = "25.11"; # You should not change this value.
 
   home.packages = with pkgs; [
     wl-clipboard
@@ -24,6 +21,7 @@
     gitkraken
     onlyoffice-desktopeditors
     bun
+    pinta
   ];
 
   fonts.fontconfig.enable = true;
@@ -41,6 +39,5 @@
     NIXOS_OZONE_WL = "1";
   };
 
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
+  programs.home-manager.enable = true; # Let Home Manager install and manage itself.
 }

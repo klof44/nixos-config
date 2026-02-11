@@ -11,6 +11,7 @@
       };
     };
     ".cache/noctalia/bg.png".source = ./bg.png;
+    ".face".source = ./.face;
   };
 
   programs.noctalia-shell = {
@@ -21,7 +22,7 @@
         density = "compact";
         position = "top";
         showCapsule = false;
-	transparentBackground = false;
+	      transparentBackground = false;
         monitors = [ "eDP-1" ];
 
         widgets = {
@@ -78,7 +79,6 @@
       templates = {
         gtk = true;
         qt = true;
-        foot = true;
       };
 
       location = { weatherEnabled = false; };

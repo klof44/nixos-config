@@ -13,7 +13,7 @@
   ];
 
   imports = [
-    ../noctalia/noctalia.nix
-    # ../wofi/wofi.nix
+    ../noctalia/noctalia.nix # bar, launcher, osd
+    ../foot/foot.nix
   ];
 }
