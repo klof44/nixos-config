@@ -1,5 +1,6 @@
 { pkgs, inputs, ... }:
 {
+  # No longer is use
   imports = [
     inputs.noctalia.homeModules.default
   ];
@@ -53,7 +54,6 @@
               colorizeIcons = true;
               drawerEnabled = false;
             }
-	    { id = "Network"; }
             { id = "Volume"; }
             { id = "Brightness"; }
             { id = "NotificationHistory"; }
@@ -73,7 +73,8 @@
       };
 
       ui = {
-        fontDefault = "Jetbrains Mono Nerd";
+        fontDefault = "JetBrainsMono NF";
+        fontFixed = "JetBrainsMono NF";
       };
 
       templates = {
@@ -92,6 +93,49 @@
       OSD = {
         monitors = [ "eDP-1" ];
       };
+
+    desktopWidgets = {
+      enabled = true;
+      gridSnap = true;
+      monitorWidgets = [
+        {
+          name = "eDP-1";
+          widgets = [
+            {
+              diskPath = "/";
+              id = "SystemStat";
+              layout = "bottom";
+              roundedCorners = true;
+              showBackground = true;
+              statType = "CPU";
+              x = 2304;
+              y = 64;
+            }
+            {
+              diskPath = "/";
+              id = "SystemStat";
+              layout = "bottom";
+              roundedCorners = true;
+              scale = 1;
+              showBackground = true;
+              statType = "Network";
+              x = 2304;
+              y = 320;
+            }
+            {
+              diskPath = "/";
+              id = "SystemStat";
+              layout = "bottom";
+              roundedCorners = true;
+              showBackground = true;
+              statType = "Memory";
+              x = 2304;
+              y = 192;
+            }
+          ];
+        }
+      ];
+    };
     };
   };
 }

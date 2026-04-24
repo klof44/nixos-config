@@ -1,15 +1,13 @@
 * {
     border: none;
     font-family: 'JetBrainsMono Nerd Font';
-    font-size: 12px;
+    font-size: 10px;
     color: #caa3ee;
     border-radius: 20px;
 }
 
-window {
-	/*font-weight: bold;*/
-}
 window#waybar {
+    font-weight: bold;
     background: rgba(0, 0, 0, 0);
 }
 /*-----module groups----*/
@@ -18,7 +16,7 @@ window#waybar {
     margin: 2px 10px 0 0;
 }
 .modules-center {
-	background-color: #2a2a2a;
+	background-color: transparent;
     margin: 2px 0 0 0;
 }
 .modules-left {
@@ -38,8 +36,7 @@ window#waybar {
 
 #workspaces button.active {
 	background-color: #a562e2;
-  color: black;
-  width: 200%;
+    color: black;
 }
 
 

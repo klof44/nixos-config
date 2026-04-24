@@ -7,32 +7,31 @@
   home.stateVersion = "25.11"; # You should not change this value.
 
   home.packages = with pkgs; [
-    wl-clipboard
-    cliphist
     vscode
     nerd-fonts.jetbrains-mono
+    noto-fonts-cjk-sans
     vesktop
-    arrpc
     spotify
     prismlauncher
-    osu-lazer-bin
     jetbrains-toolbox
     inputs.DuckGameRebuilt.packages.x86_64-linux.default
     gitkraken
     onlyoffice-desktopeditors
     bun
-    pinta
+    signal-desktop
+    davinci-resolve
+    audacity
+    deadlock-mod-manager
+
+    teams-for-linux
   ];
 
   fonts.fontconfig.enable = true;
 
   imports = [
     ../../modules/home-manager/niri/niri.nix
+    ../../modules/home-manager/sunshine/apps-fix.nix
   ];
-  
-  home.file = {
-
-  };
 
   home.sessionVariables = {
     EDITOR = "nvim";

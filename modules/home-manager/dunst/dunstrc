@@ -11,7 +11,7 @@
     # Shrink window if smaller than width
     shrink = no
     # Set transparency of notifications
-    transparency = 0
+    transparency = 0.2
     # Height of whole notification    
     notification_height = 0
     # Height of seperators
@@ -21,13 +21,15 @@
     # Horizontal padding
     horizontal_padding = 8
     # Width of frame around window
-    frame_width = 1
+    frame_width = 3
     # Color of frame around window
     frame_color = "#caa3ee"
     # Sort messages by urgency
     sort = yes
     # Idle seconds
     idle_threshold = 0
+
+    offset = (13, 40)
 
     ### Text ###
     
@@ -93,7 +95,7 @@
     # Dunst verbosity
     verbosity = mesg
     # Corner radius of dunst
-    corner_radius = 4
+    corner_radius = 12
     # Ignore dbus closeNotification message
     ignore_dbusclose = false
 
@@ -105,13 +107,6 @@
     mouse_middle_click = do_action
     # Right click
     mouse_right_click = do_action
-
-[shortcuts]
-
-    # Close one notification
-    close = ctrl+space
-    # Close all notifications
-    close_all = ctrl+shift+space
 
 [urgency_normal]
 

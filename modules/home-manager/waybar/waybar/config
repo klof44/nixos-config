@@ -1,9 +1,8 @@
 {
-    "modules-left": ["hyprland/workspaces", "custom/media"],
-    "modules-center": ["clock"],
-    "modules-right": ["tray", "pulseaudio", "backlight", "temperature", "battery"],
-    "output": ["eDP-1", "eDP-2"],
-    
+    "modules-left": ["clock", "custom/media"],
+    "modules-right": ["tray", "battery"],
+    "output": ["eDP-1", "HDMI-A-1"],
+
     "custom/media": {
       "return-type": "json",
       "exec": "sh ~/.config/waybar/scripts/music.sh",
