@@ -36,25 +36,10 @@
   # ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="048d", ATTR{idProduct}=="c985", TEST=="power/control", ATTR{power/control}="on"
   '';
 
-  boot.supportedFilesystems = [ "ntfs" ];
-  fileSystems."/mnt/shared" = {
-    device = "/dev/disk/by-uuid/dc969b4e-69f4-4046-9c20-dcd72a0eaedf";
-    fsType = "btrfs";
-  };
   fileSystems."/mnt/blue" = {
     device = "/dev/disk/by-uuid/92a5964d-d0fc-4adc-b929-3b5a19c5b14d";
     fsType = "btrfs";
-  };
-  fileSystems."/mnt/win" = {
-    device = "/dev/disk/by-uuid/DAAAEB5AAAEB31A5";
-    fsType = "ntfs";
-    options = [
-      "uid=1000"
-      "gid=100"
-      "users"
-      "nofail"
-      "exec"
-    ];
+    options = [ "nofail" ];
   };
 
   networking.hostName = "LEgion"; # Define your hostname.
@@ -94,11 +79,13 @@
     sddm = {
       enable = true;
       wayland.enable = lib.mkForce true;
+      wayland.compositorCommand = "${lib.getExe' pkgs.kdePackages.kwin "kwin_wayland"} --drm --no-lockscreen --no-global-shortcuts --locale1";
       enableHidpi = true;
       extraPackages = [
         pkgs.kdePackages.qtsvg 
         pkgs.kdePackages.qtmultimedia
         pkgs.kdePackages.qtvirtualkeyboard
+        pkgs.kdePackages.layer-shell-qt
       ];
     };
   };
@@ -201,8 +188,7 @@
       alias nrsu="sudo nix flake update --flake /home/maxim/config && sudo nixos-rebuild switch --flake /home/maxim/config/#LEgion --upgrade"
       function ns
         export NIXPKGS_ALLOW_UNFREE=1
-      	nix-shell -p $argv
-        fish
+      	nix shell nixpkgs#$argv
       end
     '';
   };
@@ -281,6 +267,7 @@
     foot
     pavucontrol
     gamescope-wsi
+    papirus-icon-theme
 
     mono
   ];

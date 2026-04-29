@@ -32,7 +32,6 @@ output "eDP-1" {
 
     position x=3840 y=0
 
-    variable-refresh-rate
     focus-at-startup
 }
 
@@ -55,6 +54,8 @@ layout {
     gaps 6
 
     center-focused-column "never"
+
+    background-color "transparent"
 
     preset-column-widths {
         proportion 0.33333
@@ -93,6 +94,8 @@ spawn-at-startup "waybar"
 spawn-sh-at-startup "dunst"
 spawn-sh-at-startup "swaybg -i $HOME/.config/hypr/bg.png"
 spawn-sh-at-startup "wl-paste --watch cliphist store"
+spawn-at-startup "vesktop"
+spawn-at-startup "signal-desktopn"
 
 hotkey-overlay {
     skip-at-startup
@@ -112,17 +115,6 @@ window-rule {
     open-floating true
 }
 
-// Example: block out two password managers from screen capture.
-// (This example rule is commented out with a "/-" in front.)
-/-window-rule {
-    match app-id=r#"^org\.gnome\.World\.Secrets$"#
-
-    block-out-from "screen-capture"
-
-    // Use this instead if you want them visible on third-party screenshot tools.
-    // block-out-from "screencast"
-}
-
 window-rule {
     geometry-corner-radius 8
     clip-to-geometry true
@@ -136,7 +128,7 @@ binds {
     Super+Shift+L hotkey-overlay-title="Lock the Screen: Hyprlock" { spawn "hyprlock"; }
     Mod+S { spawn "firefox"; }
 
-    Mod+V { spawn-sh "cliphist list | sh ~/.config/wofi/cliphist-wofi-img.sh | wl-copy"; }
+    Mod+V { spawn-sh "sh ~/.config/wofi/cliphist-wofi-img.sh | wl-copy"; }
 
     XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+ -l 1.0"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
@@ -310,7 +302,7 @@ debug {
 }
 
 layer-rule {
-  match namespace="^noctalia-overview*"
+  match namespace="wallpaper"
   place-within-backdrop true
 }
 
@@ -319,3 +311,40 @@ window-rule {
     default-floating-position x=10 y=10 relative-to="bottom-right"
 }
 
+window-rule {
+    match app-id="signal"
+    open-on-output "eDP-1"
+    block-out-from "screencast"
+}
+
+window-rule {
+    match app-id="vesktop"
+    open-on-output "eDP-1"
+}
+
+// Blur Effects
+
+layer-rule {
+    match namespace="wofi"
+
+    background-effect {
+        blur true
+        xray false
+    }
+}
+
+window-rule {
+    match app-id="foot"
+
+    background-effect {
+        blur true
+        xray false
+    }
+}
+
+blur {
+    passes 3
+    offset 1.0
+    noise 0.02
+    saturation 1.5
+}

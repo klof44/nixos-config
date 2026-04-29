@@ -7,9 +7,6 @@
 # produces thumbnails and stores them in XDG_CACHE_HOME
 # note: does NOT put in clipboard, call wl-copy yourself!
 
-# THIS COMMAND BTW:
-# cliphist list | sh <path>/cliphist-wofi-img.sh | wl-copy
-
 # set up thumbnail directory
 thumb_dir="${XDG_CACHE_HOME:-$HOME/.cache}/cliphist/thumbs"
 mkdir -p "$thumb_dir"
@@ -40,7 +37,7 @@ match(\$0, /^([0-9]+)\s(\[\[\s)?binary.*(jpg|jpeg|png|bmp)/, grp) {
 1
 EOF
 
-choice=$(gawk <<< $cliphist_list "$prog" | wofi -I --dmenu -Dimage_size=100 -Dynamic_lines=true)
+choice=$(gawk <<< $cliphist_list "$prog" | wofi -I --dmenu --cache-file=/dev/null -Dimage_size=100 -Dynamic_lines=true)
 
 # stop execution if nothing selected in wofi menu
 [ -z "$choice" ] && exit 1
