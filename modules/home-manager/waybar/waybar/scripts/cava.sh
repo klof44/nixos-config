@@ -1,7 +1,6 @@
 #! /usr/bin/env bash
 
-#bar="▔🮂🮃▀🮄🮅🮆█"
-bar="▁▂▃▄▅▆▇█"
+bar=" ▁▂▃▄▅▆▇█"
 dict="s/;//g;"
 
 # creating "dictionary" to replace char with bar
@@ -25,7 +24,7 @@ bar_spacing = 0
 method = raw
 raw_target = /dev/stdout
 data_format = ascii
-ascii_max_range = 7
+ascii_max_range = 8
 noise_reduction = 50
 reverse = 1
 show_idle_bar_heads = 0
@@ -35,5 +34,5 @@ show_idle_bar_heads = 0
 
 # read stdout from cava
 cava -p $config_file | while read -r line; do
-    echo $line | sed $dict
+    echo $line | sed "$dict"
 done
