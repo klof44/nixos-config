@@ -8,6 +8,5 @@
     waybar
     playerctl
     cava
-    noto-fonts
   ];
 }
