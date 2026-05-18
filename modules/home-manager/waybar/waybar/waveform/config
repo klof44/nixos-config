@@ -1,0 +1,10 @@
+{
+  "modules-center": ["custom/cava"],
+  "expand-center": true,
+  "output": ["HDMI-A-1"],
+  "position": "bottom",
+  "exclusive": false,
+  "custom/cava": {
+    "exec": "sh $HOME/.config/waybar/scripts/cava.sh"
+  }
+}

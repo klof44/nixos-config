@@ -58,7 +58,10 @@
   };
   nix.settings.auto-optimise-store = true;
 
-  programs.localsend.enable = true;
+  programs.localsend = {
+    enable = true;
+    openFirewall = true;
+  };
 
   networking.networkmanager.enable = true;
   networking.firewall = {
@@ -103,6 +106,10 @@
       "LoginScreen".background = "bg.png";
     };
   };
+  qt = {
+    enable = true;
+    style = "adwaita-dark";
+  };
 
   services.xserver.xkb = {
     layout = "us";
@@ -110,6 +117,12 @@
   };
 
   services.printing.enable = true;
+  services.printing.drivers = [ pkgs.brlaser ];
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -245,7 +258,10 @@
     backupFileExtension = "backup";
   };
 
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu.swtpm.enable = true;
+  };
   programs.virt-manager.enable = true;
 
   fonts.fontDir.enable = true;
@@ -268,7 +284,7 @@
     pavucontrol
     gamescope-wsi
     papirus-icon-theme
-
+    virtiofsd
     mono
   ];
   programs.gpu-screen-recorder.enable = true;

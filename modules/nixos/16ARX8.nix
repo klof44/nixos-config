@@ -2,11 +2,7 @@
 {
   services.xserver.dpi = 189;
 
-  boot.kernelModules = ["amdgpu"];
-  services.xserver.videoDrivers = [
-    "amdgpu"
-    "nvidia"
-  ];
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   # boot.kernelParams = [ "amdgpu.ppfeaturemask=0xfff73fff" ];
 
@@ -27,7 +23,7 @@
       prime = {
         amdgpuBusId = "PCI:5:0:0";
         nvidiaBusId = "PCI:1:0:0";
-
+  
         offload = {
           enable = true;
           enableOffloadCmd = true;

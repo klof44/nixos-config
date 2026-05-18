@@ -21,7 +21,6 @@
 
     nix-cachyos-kernel = {
       url = "github:xddxdd/nix-cachyos-kernel/release";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     affinity-nix = {
@@ -51,13 +50,13 @@
 
         ({ pkgs, ... }:
         {
-          # boot.kernelPackages = pkgs.linuxPackages_6_18;  
+          # boot.kernelPackages = pkgs.linuxPackages_latest;  
 
           nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned affinity-nix.overlays.default ];
-          boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
+          boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-zen4;
 
-          nix.settings.substituters = [ "https://attic.xuyh0120.win/lantian" "https://cache.garnix.io" ];
-          nix.settings.trusted-public-keys = [ "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=" ];
+          nix.settings.substituters = [ "https://cache.garnix.io" "https://attic.xuyh0120.win/lantian" ];
+          nix.settings.trusted-public-keys = [ "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=" "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
 
           environment.systemPackages = [ affinity-nix.packages.x86_64-linux.affinity-v3 ];
         })

@@ -16,7 +16,7 @@
       upnp = true;
       origin_web_ui_allowed = "pc";
       back_button_timeout = 300;
-      output_name = 1;
+      output_name = 2;
     };
 
 /* Broken on latest, see ../home-manager/sinshine/apps-fix.nix

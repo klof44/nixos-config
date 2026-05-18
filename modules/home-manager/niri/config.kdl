@@ -91,11 +91,13 @@ layout {
 
 // spawn-at-startup "noctalia-shell"
 spawn-at-startup "waybar"
+spawn-sh-at-startup "waybar -c $HOME/.config/waybar/waveform/config -s $HOME/.config/waybar/waveform/style.css"
 spawn-sh-at-startup "dunst"
 spawn-sh-at-startup "swaybg -i $HOME/.config/hypr/bg.png"
 spawn-sh-at-startup "wl-paste --watch cliphist store"
 spawn-at-startup "vesktop"
-spawn-at-startup "signal-desktopn"
+spawn-at-startup "signal-desktop"
+spawn-at-startup "sunshine"
 
 hotkey-overlay {
     skip-at-startup
@@ -320,6 +322,11 @@ window-rule {
 window-rule {
     match app-id="vesktop"
     open-on-output "eDP-1"
+}
+
+window-rule {
+    match app-id="org.strawberrymusicplayer.strawberry"
+    open-on-output "DP-1"
 }
 
 // Blur Effects

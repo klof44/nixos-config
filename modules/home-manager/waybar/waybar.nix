@@ -7,5 +7,7 @@
   home.packages = with pkgs; [
     waybar
     playerctl
+    cava
+    noto-fonts
   ];
 }
