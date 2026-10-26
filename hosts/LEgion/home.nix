@@ -12,28 +12,42 @@
     noto-fonts
     noto-fonts-cjk-sans
     vesktop
-    arrpc
     spotify
     prismlauncher
     jetbrains-toolbox
     inputs.DuckGameRebuilt.packages.x86_64-linux.default
     gitkraken
-    onlyoffice-desktopeditors
-    bun
+    euro-office-desktopeditors
     signal-desktop
     davinci-resolve
     audacity
     deadlock-mod-manager
-    heroic
     teams-for-linux
-    strawberry
+    lutris
+    feishin
+    moonlight-qt
+    cloudflared
+    remmina
+    protonplus
+    libxcursor
+    flatpak
+    scrcpy
+    v4l-utils
+    ffmpeg-full
+    powertop
+    networkmanagerapplet
+    fishPlugins.hydro
+    fishPlugins.z
+    fishPlugins.done
+    jq
+    vscode
+    nodejs
   ];
 
   fonts.fontconfig.enable = true;
 
   imports = [
     ../../modules/home-manager/niri/niri.nix
-    ../../modules/home-manager/sunshine/apps-fix.nix
   ];
 
   home.sessionVariables = {

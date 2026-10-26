@@ -3,6 +3,7 @@
   home.file = {
     ".config/niri/config.kdl".source = ./config.kdl;
     ".config/hypr/bg.png".source = ./bg.png;
+    ".config/niri/autostart.sh".source = ./autostart.sh;
   };
 
   home.packages = with pkgs; [

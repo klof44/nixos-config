@@ -1,7 +1,7 @@
 {
   "modules-center": ["custom/cava"],
   "expand-center": true,
-  "output": ["HDMI-A-1"],
+  "output": ["HDMI-A-1", "eDP-2"],
   "position": "bottom",
   "exclusive": false,
   "custom/cava": {

@@ -4,7 +4,7 @@
 
   services.xserver.videoDrivers = [ "nvidia" ];
 
-  # boot.kernelParams = [ "amdgpu.ppfeaturemask=0xfff73fff" ];
+  # boot.kernelParams = [ "nvidia.NVreg_EnableMSI=0" ];
 
   hardware = {
     graphics.enable = true;

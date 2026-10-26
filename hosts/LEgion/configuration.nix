@@ -3,7 +3,6 @@
   imports = [
       ./hardware-configuration.nix
       ../../modules/nixos/16ARX8.nix
-      ../../modules/nixos/sunshine.nix
       inputs.silentSDDM.nixosModules.default
   ];
 
@@ -12,21 +11,37 @@
   }];
   boot.resumeDevice = "/dev/disk/by-uuid/9c7507ff-3aec-423a-b7a1-27fa91875b7f";
 
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.systemd-boot.configurationLimit = 12;
+  boot.loader = {
+    systemd-boot = {
+      enable = true;
+      configurationLimit = 12;
+    };
 
+    timeout = 0;
+    efi.canTouchEfiVariables = true;
+  };
+
+
+  boot.kernel.sysctl = {
+    "vm.max_map_count" = 2147483642;
+    "net.ipv4.ip_forward" = 1;
+    "net.ipv6.conf.all.forwarding" = 1;
+    "kernel.unprivileged_userns_clone" = 1;
+  };
+
+  boot.extraModulePackages = [
+    config.boot.kernelPackages.v4l2loopback
+  ];
   boot.kernelModules  = [ "v4l2loopback" ];
-
-  boot.kernel.sysctl."vm.max_map_count" = 2147483642;
-  boot.kernel.sysctl."net.ipv4.ip_forward" = 1;
-  boot.kernel.sysctl."net.ipv6.conf.all.forwarding" = 1;
-
+  
   boot.extraModprobeConfig = ''
   options snd_hda_intel power_save=0
+
   options rtw89_pci disable_aspm_l1=Y disable_aspm_l1ss=Y
+
+  options v4l2loopback devices=2 video_nr=10,11 card_label="Virt Cam, OBS Cam" exclusive_caps=1
   '';
+
   services.udev.extraRules = ''
   ACTION=="add" SUBSYSTEM=="pci" ATTR{vendor}=="0x1022" ATTR{device}=="0x15b8" ATTR{power/wakeup}="disabled"
   ACTION=="add" SUBSYSTEM=="pci" ATTR{vendor}=="0x1022" ATTR{device}=="0x15b7" ATTR{power/wakeup}="disabled"
@@ -34,10 +49,11 @@
   # Keyboard and Touchpad no suspend
   # ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="048d", ATTR{idProduct}=="c103", TEST=="power/control", ATTR{power/control}="on"
   # ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="048d", ATTR{idProduct}=="c985", TEST=="power/control", ATTR{power/control}="on"
+  
   '';
 
   fileSystems."/mnt/blue" = {
-    device = "/dev/disk/by-uuid/92a5964d-d0fc-4adc-b929-3b5a19c5b14d";
+    device = "/dev/disk/by-label/blue";
     fsType = "btrfs";
     options = [ "nofail" ];
   };
@@ -63,7 +79,9 @@
     openFirewall = true;
   };
 
-  networking.networkmanager.enable = true;
+  networking.networkmanager = {
+    enable = true;
+  };
   networking.firewall = {
     enable = true;
   };
@@ -75,8 +93,18 @@
   i18n.defaultLocale = "en_CA.UTF-8";
 
   programs.niri.enable = true;
+  xdg.portal = {
+    enable = true;
+    xdgOpenUsePortal = true;
 
-  services.xserver.enable = true;
+    extraPortals = [ pkgs.kdePackages.xdg-desktop-portal-kde pkgs.xdg-desktop-portal-gnome ];
+    config.niri = {
+      default = lib.mkForce [ "gnome" "kde"  ];
+      "org.freedesktop.portal.FileChooser" = [ "kde" ];
+      "org.freedesktop.portal.ScreenCast" = [ "gnome" ];
+    };
+  };
+
   services.displayManager = {
     enable = true;
     sddm = {
@@ -91,6 +119,13 @@
         pkgs.kdePackages.layer-shell-qt
       ];
     };
+  };
+  security.pam.services.sddm.enableKwallet = true;
+  security.pam.services = { 
+   login.kwallet = { 
+     enable = true; 
+     package = pkgs.kdePackages.kwallet-pam; 
+    }; 
   };
   programs.silentSDDM = {
     enable = true;
@@ -111,13 +146,14 @@
     style = "adwaita-dark";
   };
 
+  services.xserver.enable = true;
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
 
   services.printing.enable = true;
-  services.printing.drivers = [ pkgs.brlaser ];
+  services.printing.drivers = with pkgs; [ brlaser ];
   services.avahi = {
     enable = true;
     nssmdns4 = true;
@@ -142,9 +178,9 @@
     enable = true;
     settings = {
       CPU_BOOST_ON_AC = 1;
-      CPU_BOOST_ON_BAT = 1;
+      CPU_BOOST_ON_BAT = 0;
       CPU_HWP_DYN_BOOST_ON_AC = 1;
-      CPU_HWP_DYN_BOOST_ON_BAT = 1;
+      CPU_HWP_DYN_BOOST_ON_BAT = 0;
       CPU_SCALING_GOVERNOR_ON_AC = "performance";
       CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
       CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
@@ -173,9 +209,9 @@
       wlrobs
       obs-pipewire-audio-capture
       obs-gstreamer
+      obs-backgroundremoval
+      obs-vkcapture
     ];
-
-    enableVirtualCamera = true;
   };
 
   programs.appimage = {
@@ -188,7 +224,6 @@
         pkgs.icu
         pkgs.libxcrypt-legacy
         pkgs.python312
-        pkgs.python312Packages.torch
       ]; 
     };
   };
@@ -198,7 +233,7 @@
     interactiveShellInit = ''
       set fish_greeting
       alias nrs="sudo nixos-rebuild switch --flake /home/maxim/config/#LEgion"
-      alias nrsu="sudo nix flake update --flake /home/maxim/config && sudo nixos-rebuild switch --flake /home/maxim/config/#LEgion --upgrade"
+      alias nrsu="sudo nix flake update --flake /home/maxim/config && sudo nixos-rebuild switch --flake /home/maxim/config/#LEgion"
       function ns
         export NIXPKGS_ALLOW_UNFREE=1
       	nix shell nixpkgs#$argv
@@ -211,23 +246,7 @@
   users.users.maxim = {
     isNormalUser = true;
     description = "Maxim";
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" ];
-    packages = with pkgs; [
-      protonplus
-      libxcursor
-      flatpak
-      scrcpy
-      v4l-utils
-      ffmpeg-full
-      powertop
-      direnv
-      networkmanagerapplet
-
-      fishPlugins.hydro
-      fishPlugins.z
-      fishPlugins.done
-      jq
-    ];
+    extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" ];
     shell = pkgs.fish;
   };
   nix.settings.trusted-users = [ "root" "maxim" ];
@@ -239,14 +258,23 @@
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
     gamescopeSession.enable = true;
+
+    package = pkgs.steam.override {
+      extraEnv = {
+        LD_AUDIT = "${
+          inputs.sls-steam.packages.${pkgs.stdenv.hostPlatform.system}.sls-steam
+        }/library-inject.so:${
+          inputs.sls-steam.packages.${pkgs.stdenv.hostPlatform.system}.sls-steam
+        }/SLSsteam.so";
+      };
+    };
   };
 
   programs.gamescope = {
     enable = true;
-    capSysNice = true;
+    capSysNice = false;
   };
 
-  programs.thunar.enable = true;
   programs.xfconf.enable = true;
   services.gvfs.enable = true;
   services.tumbler.enable = true;
@@ -264,18 +292,24 @@
   };
   programs.virt-manager.enable = true;
 
+  services.tailscale = {
+    enable = true;
+    extraDaemonFlags = ["--no-logs-no-support"];
+    port = 41642;
+  };
+
   fonts.fontDir.enable = true;
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages = with pkgs; [
     neovim 
     git
+    gh
     gparted
     btop
     firefox
     mpv
     nvtopPackages.nvidia
     nvtopPackages.amd
-    nautilus
     polkit_gnome
     gpu-screen-recorder-gtk
     dnsmasq
@@ -286,8 +320,20 @@
     papirus-icon-theme
     virtiofsd
     mono
+    unrar
+    p7zip
+    gtk3
+
+    kdePackages.qtsvg
+    kdePackages.kio
+    kdePackages.kio-fuse
+    kdePackages.kio-extras
+    kdePackages.dolphin
+    kdePackages.ark
+    kdePackages.kwallet
   ];
-  programs.gpu-screen-recorder.enable = true;
+  # virtualisation.vmware.host.enable = true; 
+  
   networking.firewall.trustedInterfaces = [ "virbr0" ];
 
   boot.kernelParams = [ "transparent_hugepage=never" /* "clocksource=tsc" "tsc=reliable" BETTER GAME LOAD TIMES BUT BREAKS VMWARE */ ];
@@ -299,5 +345,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.11"; # Did you read the comment?
-
 }

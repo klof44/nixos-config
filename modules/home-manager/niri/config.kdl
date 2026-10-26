@@ -34,6 +34,18 @@ output "eDP-1" {
 
     focus-at-startup
 }
+output "eDP-2" {
+    mode "2560x1600@165.002"
+
+    scale 1
+    transform "normal"
+
+    position x=3840 y=0
+
+    focus-at-startup
+
+    variable-refresh-rate
+}
 
 output "DP-1" {
   mode "1920x1080"
@@ -87,17 +99,20 @@ layout {
         offset x=0 y=5
         color "#0007"
     }
+
+    struts {
+        left 16
+        right 16
+    }
 }
 
-// spawn-at-startup "noctalia-shell"
 spawn-at-startup "waybar"
-spawn-sh-at-startup "waybar -c $HOME/.config/waybar/waveform/config -s $HOME/.config/waybar/waveform/style.css"
+spawn-sh-at-startup "sleep 2 && waybar -c $HOME/.config/waybar/waveform/config -s $HOME/.config/waybar/waveform/style.css"
 spawn-sh-at-startup "dunst"
 spawn-sh-at-startup "swaybg -i $HOME/.config/hypr/bg.png"
 spawn-sh-at-startup "wl-paste --watch cliphist store"
-spawn-at-startup "vesktop"
-spawn-at-startup "signal-desktop"
-spawn-at-startup "sunshine"
+
+spawn-sh-at-startup "$HOME/.config/niri/autostart.sh"
 
 hotkey-overlay {
     skip-at-startup
@@ -252,6 +267,7 @@ binds {
     Mod+Shift+R { switch-preset-window-height; }
     Mod+Ctrl+R { reset-window-height; }
     Mod+F { maximize-column; }
+    Mod+Alt+F { maximize-window-to-edges; }
     Mod+Shift+F { fullscreen-window; }
     MOD+G { toggle-window-floating; }
 
@@ -280,7 +296,7 @@ binds {
     Mod+Shift+E { quit; }
     Ctrl+Alt+Delete { quit; }
 
-    Mod+A { spawn "nautilus"; }
+    Mod+A { spawn "dolphin"; }
 }
 
 cursor {
@@ -325,7 +341,7 @@ window-rule {
 }
 
 window-rule {
-    match app-id="org.strawberrymusicplayer.strawberry"
+    match app-id="feishin"
     open-on-output "DP-1"
 }
 
@@ -354,4 +370,8 @@ blur {
     offset 1.0
     noise 0.02
     saturation 1.5
+}
+
+switch-events {
+    lid-close { spawn "hyprlock"; } 
 }

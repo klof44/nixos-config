@@ -1,7 +1,12 @@
 {
-    "modules-left": ["clock", "custom/media"],
+    "modules-left": ["custom/logo", "clock", "custom/media"],
     "modules-right": ["tray", "battery"],
-    "output": ["eDP-1", "HDMI-A-1"],
+    "output": ["eDP-1", "HDMI-A-1", "eDP-2"],
+
+    "custom/logo": {
+      "format": "  ",
+      "on-click": "wofi --show drun"
+    },
 
     "custom/media": {
       "return-type": "json",

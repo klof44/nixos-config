@@ -11,9 +11,11 @@ if [[ "$URL" == "file://"* ]]; then
   exit
 fi
 
+TRACKID=$(basename $(playerctl metadata --player=%any --ignore-player=firefox | grep trackid | awk '{print $3}'))
+
 CACHE_DIR="/tmp/"
 mkdir -p "$CACHE_DIR"
-CACHE_FILE="$CACHE_DIR/$(basename "$URL")"
+CACHE_FILE="$CACHE_DIR/$(basename "$TRACKID")"
 
 if [ ! -f "$CACHE_FILE" ]; then
     curl -s "$URL" -o "$CACHE_FILE"

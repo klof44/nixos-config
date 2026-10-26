@@ -27,9 +27,21 @@
       url = "github:mrshmllow/affinity-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    sls-steam = {
+      url = "github:AceSLS/SLSsteam";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    creamlinux-installer = {
+      type = "github";
+      owner = "Novattz";
+      repo = "creamlinux-installer";
+      flake = false;
+    };
   };
 
-  outputs = inputs@{nixpkgs, home-manager, nix-cachyos-kernel, affinity-nix, ...}: {
+  outputs = inputs@{nixpkgs, home-manager, nix-cachyos-kernel, affinity-nix, sls-steam, creamlinux-installer, ...}: {
     nixosConfigurations.LEgion = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -53,12 +65,11 @@
           # boot.kernelPackages = pkgs.linuxPackages_latest;  
 
           nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned affinity-nix.overlays.default ];
+          environment.systemPackages = [ pkgs.affinity-v3 (import inputs.creamlinux-installer { inherit pkgs; }) ];
           boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-zen4;
 
-          nix.settings.substituters = [ "https://cache.garnix.io" "https://attic.xuyh0120.win/lantian" ];
-          nix.settings.trusted-public-keys = [ "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=" "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc=" ];
-
-          environment.systemPackages = [ affinity-nix.packages.x86_64-linux.affinity-v3 ];
+          nix.settings.substituters = [ "https://cache.lantian.pub/lantian" "https://cache.nixos-cuda.org" ];
+          nix.settings.trusted-public-keys = [ "lantian:WVGO7vsRMSEN+h7Lp7kv6SAmrkEXgUGbbXm7jMDjBuQ=" "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=" ];
         })
       ];
 

@@ -19,6 +19,7 @@ bars = 320
 framerate = 120
 sensitivity = 200
 bar_spacing = 0
+autosens = 0
 
 [output]
 method = raw
