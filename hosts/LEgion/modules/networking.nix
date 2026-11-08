@@ -1,8 +1,14 @@
 { config, pkgs, ... }:
 {
-  networking.hostName = "LEgion";
-
-  networking.networkmanager.wifi.powersave = false;
+  networking = {
+    hostName = "LEgion";
+    networkmanager.wifi.powersave = false;
+    networkmanager.enable = true;
+    firewall = {
+      enable = true;
+      trustedInterfaces = [ "virbr0" ];
+    };
+  };
 
   fileSystems."/mnt/media" = {
     device = "//10.0.0.43/media";
@@ -12,25 +18,20 @@
     in ["${automount_opts},credentials=/etc/nixos/smbcredentials" "nofail" "uid=1000" "gid=1000"];
   };
 
-  services.printing.enable = true;
-  services.printing.drivers = with pkgs; [ brlaser ];
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true;
-    openFirewall = true;
-  };
+  services = {
+    printing.enable = true;
+    printing.drivers = with pkgs; [ brlaser ];
 
-  services.tailscale = {
-    enable = true;
-    extraDaemonFlags = ["--no-logs-no-support"];
-    port = 41642;
-  };
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+      openFirewall = true;
+    };
 
-  networking.networkmanager = {
-    enable = true;
+    tailscale = {
+      enable = true;
+      extraDaemonFlags = ["--no-logs-no-support"];
+      port = 41642;
+    };
   };
-  networking.firewall = {
-    enable = true;
-  };
-  networking.firewall.trustedInterfaces = [ "virbr0" ];
 }

@@ -12,6 +12,8 @@
     options rtw89_pci disable_aspm_l1=Y disable_aspm_l1ss=Y
   '';
 
+  services.thermald.enable = lib.mkDefault true;
+
   # I almost never use hybrid mode but leaving the options on does not do any harm
   hardware = {
     graphics.enable = true;

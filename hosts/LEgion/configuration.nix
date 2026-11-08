@@ -24,14 +24,16 @@
     backupFileExtension = "backup";
   };
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix = {
+    settings.experimental-features = [ "nix-command" "flakes" ];
+    settings.auto-optimise-store = true;
 
-  nix.gc = {
-    automatic = true;
-    dates = "daily";
-    options = "--delete-older-than 3d --delete-generations +3";
+    gc = {
+      automatic = true;
+      dates = "daily";
+      options = "--delete-older-than 3d --delete-generations +3";
+    };
   };
-  nix.settings.auto-optimise-store = true;
 
   hardware.enableRedistributableFirmware = true;
 

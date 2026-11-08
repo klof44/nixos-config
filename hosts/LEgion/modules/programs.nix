@@ -43,87 +43,87 @@
     (import inputs.creamlinux-installer { inherit pkgs; })
   ];
 
-  programs.niri.enable = true;
-
-  programs.obs-studio = {
-    enable = true;
-    package = (pkgs.obs-studio.override {
-      cudaSupport = true;
-    });
-
-    plugins = with pkgs.obs-studio-plugins; [
-      wlrobs
-      obs-pipewire-audio-capture
-      obs-gstreamer
-      obs-backgroundremoval
-      obs-vkcapture
-    ];
-  };
-
-  programs.fish = {
-    enable = true;
-    interactiveShellInit = ''
-      set fish_greeting
-      alias nrs="sudo nixos-rebuild switch --flake /home/maxim/config/#LEgion"
-      alias nrsu="sudo nix flake update --flake /home/maxim/config && sudo nixos-rebuild switch --flake /home/maxim/config/#LEgion"
-      function ns
-        export NIXPKGS_ALLOW_UNFREE=1
-      	nix shell nixpkgs#$argv
-      end
-    '';
-  };
-
-  programs.steam = {
-    enable = true;
-    remotePlay.openFirewall = true;
-    dedicatedServer.openFirewall = true;
-    gamescopeSession.enable = true;
-
-    package = pkgs.steam.override {
-      extraEnv = {
-        LD_AUDIT = "${
-          inputs.sls-steam.packages.${pkgs.stdenv.hostPlatform.system}.sls-steam
-        }/library-inject.so:${
-          inputs.sls-steam.packages.${pkgs.stdenv.hostPlatform.system}.sls-steam
-        }/SLSsteam.so";
-      };
-    };
-  };
-  programs.gamescope = {
-    enable = true;
-    capSysNice = false;
-  };
-
-
-
-  programs.xfconf.enable = true;
-  fonts.fontDir.enable = true;
-
   virtualisation.libvirtd = {
     enable = true;
     qemu.swtpm.enable = true;
   };
 
-  programs.virt-manager.enable = true;
+  programs = {
+    niri.enable = true;
 
-    programs.appimage = {
-    enable = true;
-    binfmt = true;
-    package = pkgs.appimage-run.override
-    {
-      extraPkgs = pkgs: 
-      [
-        pkgs.icu
-        pkgs.libxcrypt-legacy
-        pkgs.python312
-      ]; 
+    obs-studio = {
+      enable = true;
+      package = (pkgs.obs-studio.override {
+        cudaSupport = true;
+      });
+
+      plugins = with pkgs.obs-studio-plugins; [
+        wlrobs
+        obs-pipewire-audio-capture
+        obs-gstreamer
+        obs-backgroundremoval
+        obs-vkcapture
+      ];
+    };
+
+    fish = {
+      enable = true;
+      interactiveShellInit = ''
+        set fish_greeting
+        alias nrs="sudo nixos-rebuild switch --flake /home/maxim/config/#LEgion"
+        alias nrsu="sudo nix flake update --flake /home/maxim/config && sudo nixos-rebuild switch --flake /home/maxim/config/#LEgion"
+        function ns
+          export NIXPKGS_ALLOW_UNFREE=1
+          nix shell nixpkgs#$argv
+        end
+      '';
+    };
+
+    steam = {
+      enable = true;
+      remotePlay.openFirewall = true;
+      dedicatedServer.openFirewall = true;
+      gamescopeSession.enable = true;
+
+      package = pkgs.steam.override {
+        extraEnv = {
+          LD_AUDIT = "${
+            inputs.sls-steam.packages.${pkgs.stdenv.hostPlatform.system}.sls-steam
+          }/library-inject.so:${
+            inputs.sls-steam.packages.${pkgs.stdenv.hostPlatform.system}.sls-steam
+          }/SLSsteam.so";
+        };
+      };
+    };
+    gamescope = {
+      enable = true;
+      capSysNice = false;
+    };
+
+    xfconf.enable = true;
+
+    virt-manager.enable = true;
+
+    appimage = {
+      enable = true;
+      binfmt = true;
+      package = pkgs.appimage-run.override
+      {
+        extraPkgs = pkgs: 
+        [
+          pkgs.icu
+          pkgs.libxcrypt-legacy
+          pkgs.python312
+        ]; 
+      };
+    };
+
+    gamemode.enable = true;
+
+    localsend = {
+      enable = true;
+      openFirewall = true;
     };
   };
-
-  programs.gamemode.enable = true;
-
-  programs.localsend = {
-    enable = true;
-    openFirewall = true;
-  };
+  fonts.fontDir.enable = true;
 }
