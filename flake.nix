@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05"; # In case of breaking changes
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -31,6 +32,7 @@
     sls-steam = {
       url = "github:AceSLS/SLSsteam";
       inputs.nixpkgs.follows = "nixpkgs";
+      
     };
 
     creamlinux-installer = {
@@ -41,7 +43,7 @@
     };
   };
 
-  outputs = inputs@{nixpkgs, home-manager, nix-cachyos-kernel, affinity-nix, sls-steam, creamlinux-installer, ...}: {
+  outputs = inputs@{nixpkgs, home-manager, ...}: {
     nixosConfigurations.LEgion = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
@@ -55,25 +57,13 @@
                 ./hosts/LEgion/home.nix
               ];
             };
-            extraSpecialArgs = { inherit inputs; };
+            extraSpecialArgs = { inherit inputs; }; # Pass inputs to lower levels
             backupFileExtension = "backup";
           };
         }
-
-        ({ pkgs, ... }:
-        {
-          # boot.kernelPackages = pkgs.linuxPackages_latest;  
-
-          nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned affinity-nix.overlays.default ];
-          environment.systemPackages = [ pkgs.affinity-v3 (import inputs.creamlinux-installer { inherit pkgs; }) ];
-          boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-zen4;
-
-          nix.settings.substituters = [ "https://cache.lantian.pub/lantian" "https://cache.nixos-cuda.org" ];
-          nix.settings.trusted-public-keys = [ "lantian:WVGO7vsRMSEN+h7Lp7kv6SAmrkEXgUGbbXm7jMDjBuQ=" "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=" ];
-        })
       ];
 
-      specialArgs = { inherit inputs; };
+      specialArgs = { inherit inputs; }; # Pass inputs to lower levels
     };
   };
 }

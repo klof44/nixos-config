@@ -1,3 +1,4 @@
+# This is pretty much the default for configuring nvidia gpu support
 { config, pkgs, ... }:
 {
   hardware.graphics = {

@@ -1,7 +1,12 @@
 {
-    "modules-left": ["custom/logo", "clock", "custom/media"],
+    "modules-left": ["custom/logo", "custom/clock", "custom/media"],
     "modules-right": ["tray", "battery"],
     "output": ["eDP-1", "HDMI-A-1", "eDP-2"],
+
+    "custom/clock": {
+      "exec": "date '+%H:%M'",
+      "interval": 1
+    },
 
     "custom/logo": {
       "format": "  ",
